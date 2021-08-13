@@ -1,0 +1,31 @@
+// MongoDB Playground
+// Use Ctrl+Space inside a snippet or a string literal to trigger completions.
+//mongodb+srv://jsong:js0ng@cluster0.czj9j.mongodb.net/admin?authSource=admin&replicaSet=atlas-10j4xh-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true
+//mongodb+srv://<username>:<password>@cluster0.a4o5r.mongodb.net/admin?retryWrites=true&w=majority
+const database = 'NEW_DATABASE_NAME';
+const collection = 'NEW_COLLECTION_NAME';
+
+// Create a new database.
+use(database);
+
+// Create a new collection.
+db.createCollection(collection);
+
+// The prototype form to create a collection:
+/* db.createCollection( <name>,
+  {
+    capped: <boolean>,
+    autoIndexId: <boolean>,
+    size: <number>,
+    max: <number>,
+    storageEngine: <document>,
+    validator: <document>,
+    validationLevel: <string>,
+    validationAction: <string>,
+    indexOptionDefaults: <document>,
+    viewOn: <string>,
+    pipeline: <pipeline>,
+    collation: <document>,
+    writeConcern: <document>
+  }
+)*/
