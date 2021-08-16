@@ -7,14 +7,26 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var catalogRouter = require('./routes/catalog');
 
 var app = express();
 
 //setup database connections
 var mogoose = require('mongoose'); //import mongoose driver
 var mongoDB = 'mongodb://localhost:27017/test'; //setup database uri string
-var mongoAtlas = ''
-mogoose.connect(mongoDB,{})
+var mongoAtlas = 'mongodb+srv://jsong:js0ng@cluster0.czj9j.mongodb.net/admin?authSource=admin&replicaSet=atlas-10j4xh-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true'
+
+//create db connections
+//use mongDB for localhost connections, use mongoAtlas for atlas connections.
+//the {useNewUrlParser:true, useUnifiedTopology:true, use} option should be used.
+mogoose.connect(mongoDB,{useNewUrlParser:true, useUnifiedTopology:true});
+var db = mogoose.connection;
+db.on('error', function (){
+  console.error.bind(console,'MongoDB connection error.');
+})
+
+
+
 
 
 // view engine setup
@@ -29,6 +41,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/catalog', catalogRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
