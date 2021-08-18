@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1= title
+
+  if error
+    p Error getting dynamic content.
+  else
+    p The Author: #[em #[strong !{title}]] has the following information:
+
+    ul
+      li #[strong name:] !{author_detail.first_name}
+      li #[strong lifespan:] !{author_detail.lifespan}
+      //check if the genre exists for the book, if yes, iterate all the genres, otherwise set genre to none.
+      if author_detail.date_of_birth
+        li #[strong Date of birth:] !{author_detail.date_of_birth}
+      if author_detail.date_of_death  
+        li #[strong Date of death:] !{author_detail.date_of_birth}

@@ -13,7 +13,7 @@ var app = express();
 
 //setup database connections
 var mogoose = require('mongoose'); //import mongoose driver
-var mongoDB = 'mongodb://localhost:27017/test'; //setup database uri string
+var mongoDB = 'mongodb://localhost:27017/local_library'; //setup database uri string
 var mongoAtlas = 'mongodb+srv://jsong:js0ng@cluster0.czj9j.mongodb.net/admin?authSource=admin&replicaSet=atlas-10j4xh-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true'
 
 //create db connections

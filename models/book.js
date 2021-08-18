@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const path = '/catalog/book/'
+
 //create the schema
 const BookSchema = new Schema(
   {
@@ -14,9 +16,9 @@ const BookSchema = new Schema(
 
 //setup the virtual property
 BookSchema
-.virtual('rul')
+.virtual('url')
 .get(function() {
-  return '/catalog/book/' + this._id;
+  return path + this._id;
 });
 
 //create and export the model

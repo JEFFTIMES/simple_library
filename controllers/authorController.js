@@ -2,12 +2,25 @@ const Author = require('../models/author');
 
 //query all authors
 const listAuthors = function(req, res, next) {
-  res.send('Not implemented: author list.');
+  const query = Author.find({});
+  query.sort({name:'ascending'})
+    .exec(function(err,authors){
+        if(err) return next(err);
+        res.render('author_list', {title: 'Author List:' , author_list: authors});
+    });
+  
+  //res.send('Not implemented: author list.');
 }
 
 //query the details of an author
 const dispalyAuthorDetails = function(req, res, next) {
-  res.send('Not implemented: author details.');
+  const query = Author.find({_id:req.params.id})
+  query.exec(function(err, results){
+    if(err) return next(err);
+    console.log(results);
+    res.render('author_detail', {title: 'Author Details: ', author_detail: results[0]});
+  });
+  
 }
 
 //display author create form on GET method.

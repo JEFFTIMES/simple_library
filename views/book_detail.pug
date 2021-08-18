@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  h1= title
+
+  if error
+    p Error getting dynamic content.
+  else
+    p The book: #[em #[strong !{title}]] has the following information:
+
+    ul
+      li #[strong Title:] !{book_detail.title}
+      li #[strong Author:] !{book_detail.author.first_name + " " + book_detail.author.family_name}
+      //check if the genre exists for the book, if yes, iterate all the genres, otherwise set genre to none.
+      if book_detail.genre[0]
+        -
+          let genres = [];
+          book_detail.genre.forEach(g => genres.push(g.name)); 
+        li #[strong Genre:] !{genres.join(',')}
+      else 
+        li #[strong Genre:] none
+      li #[strong ISBN:] !{book_detail.isbn}
+      if book_detail.summary !== undefined 
+        li #[strong Summary:] !{book_detail.summary}

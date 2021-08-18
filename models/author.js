@@ -7,8 +7,8 @@ const AuthorSchema = new Schema(
   {
     first_name: {type: String, required: true, maxLength: 100},
     family_name: {type: String, required: true,maxLength: 100},
-    dateOfBirth: {type: Date},
-    dateofDeath: {type: Date}
+    date_of_birth: {type: Date},
+    date_of_death: {type: Date}
   }
 );
 
@@ -27,12 +27,14 @@ AuthorSchema
   .get(
     function () { 
       let lifespan = '';
-      if(this.dateOfBirth){
-        lifespan = DateTime.fromJSDate(this.dateOfBirth).toLocaleString(DateTime.DATETIME_MED);
+      if(this.date_of_birth){
+        lifespan = DateTime.fromJSDate(this.date_of_birth).toFormat('yyyy');//toLocaleString(DateTime.DATE_MED );
+        
       }
       lifespan += ' - ';
-      if(this.dateOfDeath){
-        lifespan += DateTime.fromJSDate(this.dateofDeath).toLocaleString(DateTime.DATETIME_MED);
+      if(this.date_of_death){
+        lifespan += DateTime.fromJSDate(this.date_of_death).toFormat('yyyy');//toLocaleString(DateTime.DATE_MED);
+        
       }
       return lifespan;
     }

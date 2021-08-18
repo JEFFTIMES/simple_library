@@ -1,0 +1,124 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+body {
+    font-size: 16px;
+
+
+}
+.app-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: scroll;
+    background-color: rgb(245, 207, 242);
+    
+}
+
+.search-bar-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 10rem;
+    box-sizing: border-box;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+}
+
+#search-input {
+    width: 50%;
+    height: 1.5rem;
+    border-radius: 0;
+    border: 1px solid rgb(194, 128, 255);
+    padding-left: 0.5rem;
+}
+
+
+#search-button {
+    height: 26px;
+    width: 6rem;
+    border: 1px solid rgb(194, 128, 255);
+    border-radius: 1px;
+    background-color: rgb(194, 128, 255) ;
+    font-size: 0.8rem;
+    color: rgb(135, 44, 187);
+    padding: 0;
+    text-align: center;
+}
+
+#search-button:hover {
+    height: 26px;
+    width: 6rem;
+    border: 1px solid rgb(137, 47, 221);
+    border-radius:1px;
+    background-color: rgb(137, 47, 221);
+    color:rgb(194, 128, 255);
+}
+
+.results-container {
+    display: flex;
+    flex-flow: row wrap;
+    box-sizing: border-box;
+    justify-content: center;
+    width: 100%;
+    height: 90%;
+    padding-top: 0rem;
+    padding-bottom: 2rem;
+    
+}
+
+.output-card {
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    box-shadow: 0 4px 8px 0 rgba(26, 24, 24, 0.4), 0 6px 20px 0 rgba(26, 24, 24, 0.4);
+    background-color: beige;
+    color:black;
+    width: 25rem;
+    height: 20rem;
+    margin: 2.5rem;
+    border-radius: 5px;
+    padding: 0.5rem;
+    
+}
+
+.output-card-title {
+    font-size: 1rem;
+    height: 1rem;
+    width: 100%;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    text-align: center;
+
+}
+
+.output-card-list {
+    font-size: 0.5rem;
+    height: 7rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    overflow:hidden;
+}
+
+.output-card-calories {
+    display: block;
+    font-size: 0.8rem;
+    height: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.output-card-image {
+    display: block;
+    height: 8rem;
+    width: 8rem;
+    border-radius:50%;
+    object-fit:cover;
+}
