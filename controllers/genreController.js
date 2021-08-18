@@ -18,6 +18,17 @@ exports.genre_list = function(req, res) {
 // Display detail page for a specific Genre.
 exports.genre_detail = function(req, res) {
     //res.send('NOT IMPLEMENTED: Genre detail: ' + req.params.id);
+    
+    //async.parallel usage: (give tasks in an object)
+    //define anonymous functions to enclose each task.
+    //put all the anonymous functions in an object and give each function an unique name represents the result it could produce.
+    //pass a callback function as the parameter to the enclosing function.
+    //process the real tasks inside each enclosing function, at the end of the processing call the callback() function.
+    //pass the result got by the processing as the second parameter to the callback(null, results) function with null as the first parameter.
+    //or, call the callback(err) function with an error as the first parameter.
+    //after the object parameter, pass a final callback function as the second parameter to parallel() to process the final results.
+    //the final results is an object, which property names are the name given to the anonymous functions, 
+    //and the values are the results of the tasks inside the anonymous functions.
     async.parallel(
         {
             genres: function (callback) {

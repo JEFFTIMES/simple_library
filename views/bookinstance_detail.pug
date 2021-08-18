@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  h1= title
+
+  if error
+    p Error getting dynamic content.
+  else
+    p #[em #[strong !{title}]] has the following information:
+
+    ul 
+      li #[strong Book: ]!{detail.book.title}
+      li #[strong Imprint: ]!{detail.imprint}
+      li #[strong Status: ]
+        if detail.status === 'Available'
+          span.text-success #{ detail.status }
+        else if detail.status === 'Maintenance'
+          span.text-danger #{ detail.status }
+        else
+          span.text-warning #{ detail.status }
+      li #[strong Due Back: ] 
+        span.text-warning #{detail.due_back_formatted}
+      li #[strong Summary: ] !{detail.book.summary}
