@@ -2,12 +2,26 @@ var Genre = require('../models/genre');
 
 // Display list of all Genre.
 exports.genre_list = function(req, res) {
-    res.send('NOT IMPLEMENTED: Genre list');
+    //res.send('NOT IMPLEMENTED: Genre list');
+    Genre.find({})
+        .sort('name')
+        .exec(function(err, genres){
+            if(err) return next(err);
+            res.render('genre_list',{title: 'Genres', genre_list:genres});
+        });
+
+
 };
 
 // Display detail page for a specific Genre.
 exports.genre_detail = function(req, res) {
-    res.send('NOT IMPLEMENTED: Genre detail: ' + req.params.id);
+    //res.send('NOT IMPLEMENTED: Genre detail: ' + req.params.id);
+    Genre.find({_id: req.params.id})
+        .exec(function(err, genres){
+            if(err) return next(err);
+            console.log(genres[0]);
+            res.render('genre_detail',{title: genres[0].name, genre_detail:genres[0]});
+        });
 };
 
 // Display Genre create form on GET.

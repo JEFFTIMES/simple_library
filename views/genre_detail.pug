@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1= title
+
+  if error
+    p Error getting dynamic content.
+  else
+    p #[em #[strong !{title}]] has the following information:
+
+    ul
+      li #[strong name:] !{genre_detail.name}
