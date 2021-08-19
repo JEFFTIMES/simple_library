@@ -10,7 +10,8 @@ block content
 
     ul
       li #[strong Title:] !{book_detail.title}
-      li #[strong Author:] !{book_detail.author.first_name + " " + book_detail.author.family_name}
+      li 
+        a(href=book_detail.author.url) #[strong Author:] !{book_detail.author.first_name + " " + book_detail.author.family_name}
       //check if the genre exists for the book, if yes, iterate all the genres, otherwise set genre to none.
       if book_detail.genre[0]
         -

@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  h1= title
+  h1 Genre: !{title}
 
   if error
     p Error getting dynamic content.
@@ -18,5 +18,6 @@ block content
           }
         );
       each book in books 
-        li #[strong !{book.title}]
-        | !{book.author.name}
+        li 
+          a(href=book.url) #[strong !{book.title} - ]
+          a(href=book.author.url) #[em !{book.author.name}]

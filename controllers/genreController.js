@@ -24,11 +24,14 @@ exports.genre_detail = function(req, res) {
     //put all the anonymous functions in an object and give each function an unique name represents the result it could produce.
     //pass a callback function as the parameter to the enclosing function.
     //process the real tasks inside each enclosing function, at the end of the processing call the callback() function.
-    //pass the result got by the processing as the second parameter to the callback(null, results) function with null as the first parameter.
-    //or, call the callback(err) function with an error as the first parameter.
-    //after the object parameter, pass a final callback function as the second parameter to parallel() to process the final results.
-    //the final results is an object, which property names are the name given to the anonymous functions, 
-    //and the values are the results of the tasks inside the anonymous functions.
+    //pass the result got by the processing as the second parameter to the callback(null, results) function with null as the first parameter,
+    //or, call the callback(err) function with an error as the first parameter instead.
+    //after the object parameter passed to the parallel(), pass a final callback function which receive two parameters (error, results) 
+    //for the final processing of the parallel tasks.
+    //in the final processing callback, deal with the error first, because the caller of the parallel function
+    //is a middleware function of the express framework, here should return a next(err).
+    //after the dealing with the error, it is time to process the final result, the final result is an object which property names 
+    //are the name given to the anonymous enclosing function for each task, the values are the results produced by the tasks inside the anonymous functions .
     async.parallel(
         {
             genres: function (callback) {
@@ -49,7 +52,12 @@ exports.genre_detail = function(req, res) {
             }
         }, function(error, results){
             if(error) return next(error);
-            console.log(results);
+            //console.log(results);
+            if(results===null){ //no genre found.
+                const err = new Error('No Genres found.');
+                err.status = 404;
+                return next(err);
+            }
             res.render('genre_detail',{title: results.genres[0].name, books: results.books})
         }
 

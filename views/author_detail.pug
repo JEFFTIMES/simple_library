@@ -1,18 +1,38 @@
 extends layout
 
 block content
-  h1= title
+  
+  h1= author_detail.name
 
   if error
     p Error getting dynamic content.
   else
-    p The Author: #[em #[strong !{title}]] has the following information:
+    p The Author: #[em #[strong !{author_detail.name}]] has the following information:
 
     ul
-      li #[strong name:] !{author_detail.first_name}
-      li #[strong lifespan:] !{author_detail.lifespan}
-      //check if the genre exists for the book, if yes, iterate all the genres, otherwise set genre to none.
-      if author_detail.date_of_birth
-        li #[strong Date of birth:] !{author_detail.date_of_birth}
+      li #[strong first name: ] !{author_detail.first_name}
+      li #[strong family name: ] !{author_detail.family_name}
+      //li #[strong lifespan: ] !{author_detail.lifespan}
+      
+      if author_detail.date_of_birth 
+        li #[strong Date of birth: ] !{date_of_birth_formatted}
+        
       if author_detail.date_of_death  
-        li #[strong Date of death:] !{author_detail.date_of_birth}
+        li #[strong Date of death: ] !{date_of_death_formatted}
+
+  
+  p #[em #[strong !{author_detail.name}]] has the following books:
+
+  ul
+    - 
+      books.sort(
+        function(a, b){
+          let textA = a.title.toUpperCase(); 
+          let textB = b.title.toUpperCase(); 
+          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+        }
+      );
+    each book in books 
+      li 
+        a(href=book.url) #[strong !{book.title}]
+      
