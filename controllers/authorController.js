@@ -2,6 +2,8 @@ const Author = require('../models/author');
 const Book = require('../models/book');
 const async = require('async');
 const {DateTime} = require('luxon');
+const { body,validationResult } = require('express-validator');
+
 
 //query all authors
 const listAuthors = function(req, res, next) {
@@ -67,24 +69,114 @@ const displayAuthorDetails = function(req, res, next) {
       );
     }
   );
-
-
-
 }
+
 
 //display author create form on GET method.
 const createAuthorFormOnGET = function(req, res, next) {
-  res.send('Not implemented: create author form on GET method.');
+  res.render('author_form',{title: 'Create an Author:'});  
 }
 
 //create an author on POST method.
-const createAuthorOnPOST = function(req, res, next) {
-  res.send('Not implemented: create author on POST method.');
-}
+const createAuthorOnPOST = [
+  //validate and sanitize the inputs
+  body('first_name')
+    .trim()
+    //.isEmpty()
+    //.withMessage('Please input the first name.')
+    .isLength({min:2})
+    .withMessage('Please enter at least 2 characters for the first name.')
+    .isAlphanumeric()
+    .withMessage('Alphanumeric is required for the first name.')
+  ,
+  body('family_name')
+    .trim()
+    //.isEmpty()
+    //.withMessage('Please input the family name.')
+    .isLength({min:2})
+    .withMessage('Please enter at least 2 characters for the family name.')
+    .isAlphanumeric()
+    .withMessage('Alphanumeric is required for the family name.')
+  ,
+  body('data_of_birth')
+    .optional({checkFalsy:true})
+    .isISO8601()
+    .withMessage('Invalid date formation')
+    .toDate()
+  ,
+  body('data_of_death')
+  .optional({checkFalsy:true})
+  .isISO8601()
+  .withMessage('Invalid date formation')
+  .toDate()
+  ,
+  
+  (req, res) => {
+    //get the validation results.
+    const errors = validationResult(req);
+
+    const author = new Author(
+      {
+        first_name:req.body.first_name, 
+        family_name:req.body.family_name, 
+        date_of_birth:req.body.date_of_birth, 
+        date_of_death:req.body.date_of_death
+      }
+    );
+
+    //if there are any errors, re-render the input page with reminders.
+    if(!errors.isEmpty()){
+      res.render(
+        'author_form', 
+        {
+          title: 'Create an Author:', 
+          author:
+          {
+            first_name:req.body.first_name,
+            family_name:req.body.family_name,
+            date_of_birth:req.body.date_of_birth,
+            date_of_death:req.body.date_of_death
+          }, 
+          errors: errors.array()
+        }
+      );
+    }else{
+    
+      //check if the author is already exists.
+      Author.findOne({first_name:req.body.first_name,family_name:req.body.family_name})
+        .exec(function (err,found_author){
+          if(err) return next(err);
+          //if author exists, redirect to the details page.
+          if(found_author){ 
+            res.redirect(found_author.url);
+          }else{
+            author.save(function (err) {
+              if(err) return next(err);
+              res.redirect(author.url);
+            });
+          }
+        });
+    }
+  }
+]
 
 //display author delete form on GET method.
 const deleteAuthorFormOnGET = function(req, res, next) {
-  res.send('Not implemented: delete author form on GET method.');
+  async.parallel({
+    author: function(callback) {
+        Author.findById(req.params.id).exec(callback)
+    },
+    authors_books: function(callback) {
+      Book.find({ 'author': req.params.id }).exec(callback)
+    },
+}, function(err, results) {
+    if (err) { return next(err); }
+    if (results.author==null) { // No results.
+        res.redirect('/catalog/authors');
+    }
+    // Successful, so render.
+    res.render('author_delete', { title: 'Delete Author', author: results.author, author_books: results.authors_books } );
+});
 }
 
 //delete an author on POST method.

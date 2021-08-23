@@ -1,6 +1,8 @@
 const Genre = require('../models/genre');
 const Book = require('../models/book');
 const async = require('async');
+const { body,validationResult } = require("express-validator");
+
 
 // Display list of all Genre.
 exports.genre_list = function(req, res) {
@@ -31,7 +33,7 @@ exports.genre_detail = function(req, res) {
     //in the final processing callback, deal with the error first, because the caller of the parallel function
     //is a middleware function of the express framework, here should return a next(err).
     //after the dealing with the error, it is time to process the final result, the final result is an object which property names 
-    //are the name given to the anonymous enclosing function for each task, the values are the results produced by the tasks inside the anonymous functions .
+    //are the names given to the anonymous enclosing function for each task, the values are the results produced by the tasks inside the anonymous functions .
     async.parallel(
         {
             genres: function (callback) {
@@ -53,7 +55,7 @@ exports.genre_detail = function(req, res) {
         }, function(error, results){
             if(error) return next(error);
             //console.log(results);
-            if(results===null){ //no genre found.
+            if(results === null){ //no genre found.
                 const err = new Error('No Genres found.');
                 err.status = 404;
                 return next(err);
@@ -73,13 +75,52 @@ exports.genre_detail = function(req, res) {
 
 // Display Genre create form on GET.
 exports.genre_create_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: Genre create GET');
+    res.render('genre_form', {title: 'Create Genre:'})
 };
 
 // Handle Genre create on POST.
-exports.genre_create_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Genre create POST');
-};
+exports.genre_create_post = [
+    //run the express-validator middleware to validate the 'name' of html body
+    body('name')
+        .trim()
+        .isLength({min:1})
+        .withMessage('Please input a name.')
+        .isAlpha()
+        .withMessage('Please input a valid name.')
+        .escape(), 
+    //process the creation 
+    (req, res) => {
+        //get the errors of the validation
+        const errors = validationResult(req);
+        //create a new genre 
+        const genre = new Genre({name: req.body.name});
+        //if any error of the input validation, re-render the input form with reminders
+        if(!errors.isEmpty()){
+            res.render('genre_form', {title: 'Create Genre:', genre: genre, errors: errors.array()});
+        }else{
+            Genre.findOne({name: req.body.name})
+            .exec(function (err, found_genre){
+                if(err){ 
+                    return next(err)
+                }
+                if(found_genre){ 
+                    //if the genre is found, direct the res to the detail page of such genre.
+                    res.redirect(found_genre.url);
+                }else{
+                    genre.save(function(err){
+                        if(err){ 
+                            return next(err);
+                        }
+                        res.redirect(genre.url);
+                    });
+                }
+            });
+        }
+        
+    }
+]
+
+
 
 // Display Genre delete form on GET.
 exports.genre_delete_get = function(req, res) {

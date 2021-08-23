@@ -35,4 +35,7 @@ block content
     each book in books 
       li 
         a(href=book.url) #[strong !{book.title}]
-      
+
+  hr
+  p
+    a(href=author_detail.url+'/delete') Delete author    

@@ -1,4 +1,9 @@
 const BookInstance = require('../models/bookinstance');
+const Book = require('../models/book');
+
+const {body,validationResult} = require('express-validator');
+const book = require('../models/book');
+
 
 // Display list of all BookInstances.
 exports.bookinstance_list = function(req, res) {
@@ -24,14 +29,56 @@ exports.bookinstance_detail = function(req, res) {
 };
 
 // Display BookInstance create form on GET.
-exports.bookinstance_create_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: BookInstance create GET');
+exports.bookinstance_create_get = function(req, res,next) {
+    Book.find({},'title')
+        .sort()
+        .exec(function (err,books){
+            if(err) return next(err);
+            res.render('bookinstance_form', {title: 'Create Book Instance:', book_list: books});
+        })
 };
 
 // Handle BookInstance create on POST.
-exports.bookinstance_create_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: BookInstance create POST');
-};
+exports.bookinstance_create_post = [
+    
+    //validating input.
+    body('book', 'Book must be specified').trim().isLength({ min: 1 }).escape(),
+    body('imprint', 'Imprint must be specified').trim().isLength({ min: 1 }).escape(),
+    body('status').escape(),
+    body('due_back', 'Invalid date').optional({ checkFalsy: true }).isISO8601().toDate(),
+
+    //new middleware to re-render the form or save the data.
+    (req, res, next) => {
+        //check if any errors from input form.
+        const errors = validationResult(req);
+        
+        //create model instance with input data.
+        const bookinstance = new BookInstance(
+            {
+                book: req.body.book,
+                imprint: req.body.imprint,
+                status: req.body.status,
+                due_back: req.body.due_back
+            }
+        );
+        //if any errors, render the form with reminders.
+        if(!errors.isEmpty()){
+            Book.find({},'title')
+                .sort()
+                .exec(function (err,books){
+                    if(err) return next(err);
+                    res.render('bookinstance_form', {title: 'Create Book Instance:', book_list: books, selected: bookinstance.book._id, errors:errors.array()});
+                })
+        }else{
+            //otherwise, save the data.
+            bookinstance.save(function (err){
+                if(err) return next(err);
+                res.redirect(bookinstance.url)
+            });
+        }
+    }
+
+]
 
 // Display BookInstance delete form on GET.
 exports.bookinstance_delete_get = function(req, res) {
