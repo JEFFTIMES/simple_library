@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const Schema = require('mongoose').Schema;
 const { DateTime } = require('luxon');
 
+//set global options for using findByIdAndRemove()
+mongoose.set('useFindAndModify', false);
+
 //create schema for author
 const AuthorSchema = new Schema(
   {

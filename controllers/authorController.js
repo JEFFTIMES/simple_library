@@ -13,18 +13,11 @@ const listAuthors = function(req, res, next) {
         if(err) return next(err);
         res.render('author_list', {title: 'Author List:' , author_list: authors});
     });
-  
-  //res.send('Not implemented: author list.');
 }
 
 //query the details of an author along with his/her books
 const displayAuthorDetails = function(req, res, next) {
-  // const query = Author.find({_id:req.params.id})
-  // query.exec(function(err, results){
-  //   if(err) return next(err);
-  //   console.log(results);
-  //   res.render('author_detail', {title: 'Author Details: ', author_detail: results[0]});
-  // });
+  
   async.parallel(
     {
       authors: function (callback) {
@@ -44,7 +37,7 @@ const displayAuthorDetails = function(req, res, next) {
     }, 
     function (err, results) {
       if(err) return next(err);
-      console.log(results);
+      //console.log(results);
       if(results.authors[0] === null){
         const err = new Error('No Author Found.');
         err.status = 404;
@@ -61,8 +54,8 @@ const displayAuthorDetails = function(req, res, next) {
         'author_detail', 
         {
           title: 'Author Details: ', 
-          author_detail: results.authors[0],
-          books: results.books,
+          author: results.authors[0],
+          author_books: results.books,
           date_of_birth_formatted: results.date_of_birth_formatted,
           date_of_death_formatted: results.date_of_death_formatted      
         }
@@ -160,28 +153,76 @@ const createAuthorOnPOST = [
   }
 ]
 
+
 //display author delete form on GET method.
 const deleteAuthorFormOnGET = function(req, res, next) {
-  async.parallel({
-    author: function(callback) {
-        Author.findById(req.params.id).exec(callback)
-    },
-    authors_books: function(callback) {
-      Book.find({ 'author': req.params.id }).exec(callback)
-    },
-}, function(err, results) {
-    if (err) { return next(err); }
-    if (results.author==null) { // No results.
+  
+  //pass async.parallel() two functions to get the author by _id, and the books wrote by the author.
+  async.parallel(
+    {
+      author: function(callback) {
+          Author.findById(req.params.id).exec(callback)
+      },
+      authors_books: function(callback) {
+        Book.find({ 'author': req.params.id }).exec(callback)
+      },
+    }, 
+    
+    function(err, results) {
+      if (err) { return next(err); }
+      if (results.author==null) { // No results.
         res.redirect('/catalog/authors');
+      }
+    
+      // Successful, so render.
+      res.render('author_delete', { title: 'Delete Author', author: results.author, author_books: results.authors_books } );
+
     }
-    // Successful, so render.
-    res.render('author_delete', { title: 'Delete Author', author: results.author, author_books: results.authors_books } );
-});
+  );
 }
 
+
 //delete an author on POST method.
-const deleteAuthorOnPOST = function(req, res, next){
-  res.send('Not implemented: delete author on POST method.');
+ const deleteAuthorOnPOST = function(req, res, next) {
+
+  //double check if the author is existing and if any existing books was written by the author.
+  async.parallel(
+    {
+      author: function (callback) {
+        Author.findById(req.body.authorid)
+          .exec( function (err, authorResult){
+            if(err) callback(err);
+            callback(null, authorResult);
+          });
+      },
+      books: function (callback) {
+        Book.find({author : req.body.authorid})
+          .exec( function (err, booksResult){
+            if(err) callback(err);
+            callback(null, booksResult);
+          });
+      },
+    }, 
+    //processing the parallel results
+    function (err, results) {     
+      //any error occur when access database.
+      if(err) return next(err);
+      //if author exists.
+      if(!results.author){
+        res.redirect('/catalog/authors');
+      }
+      //if books exist.
+      if(results.books.length){
+        res.redirect(author.url+'/delete');
+      }
+      //otherwise, delete the author.
+      Author.findByIdAndRemove(req.body.authorid, { userFindAndModify: false })
+        .exec(function (err,result){
+          if(err) return next(err);
+          res.redirect('/catalog/authors');
+        });
+    }
+  );
 }
 
 //display author update on GET method.

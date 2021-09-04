@@ -23,3 +23,23 @@ block content
       li #[strong ISBN:] !{book_detail.isbn}
       if book_detail.summary !== undefined 
         li #[strong Summary:] !{book_detail.summary}
+    
+    hr
+    |
+    h4 Book Instances:
+    |
+    |
+    ul 
+      for instance in instances 
+        li #[strong Imprint: ] !{instance.imprint}
+        li #[strong Status: ] !{instance.status}
+        li #[strong Due Back: ] !{instance.due_back}
+        |
+        hr
+    hr
+    p
+      a(href=book_detail.url+'/delete') Delete Book 
+    p
+      a(href=book_detail.url+'/update') Update Book
+          
+

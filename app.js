@@ -23,21 +23,18 @@ var app = express();
 
 //setup database connections
 var mogoose = require('mongoose'); //import mongoose driver
-const passport = process.env.ATLAS_USERNAME_PASSWORD;
-const mongoDB = process.env.MONGODB_LOCAL_CONNECTION_STRING;//'mongodb://localhost:27017/local_library'; //setup database uri string
-const mongoAtlas = process.env.MONGODB_ATLAS_CONNECTION_STRING;//'mongodb+srv://jsong:js0ng@cluster0.czj9j.mongodb.net/admin?authSource=admin&replicaSet=atlas-10j4xh-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true'
-//console.log(mongoDB, mongoAtlas);
+const mongoDB = process.env.MONGODB_LOCAL_CONNECTION_STRING;
+const mongoAtlas = process.env.MONGODB_ATLAS_CONNECTION_STRING;
+
 //create db connections
 //use mongDB for localhost connections, use mongoAtlas for atlas connections.
 //the {useNewUrlParser:true, useUnifiedTopology:true, use} option should be used.
-mogoose.connect(mongoAtlas,{useNewUrlParser:true, useUnifiedTopology:true});
+//the {useFindAndModify:false} option should be used to avoid warning message when use findByIdAndModify()
+mogoose.connect(mongoDB,{useNewUrlParser:true, useUnifiedTopology:true, useFindAndModify:false});
 var db = mogoose.connection;
 db.on('error', function (){
   console.error.bind(console,'MongoDB connection error.');
 })
-
-
-
 
 
 // view engine setup
